@@ -8,8 +8,18 @@
 UGDGA_CharacterJump::UGDGA_CharacterJump()
 {
 	AbilityInputID = EGDAbilityInputID::Jump;
-	InstancingPolicy = EGameplayAbilityInstancingPolicy::NonInstanced;
-	AbilityTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Jump")));
+	//InstancingPolicy = EGameplayAbilityInstancingPolicy::NonInstanced;
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	//AbilityTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Jump")));
+
+	// Use a local container to define default tags for this ability asset
+	FGameplayTagContainer DefaultTags;
+	DefaultTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Jump")));
+
+	// Set the tags using the new API (Valid in constructor only)
+	SetAssetTags(DefaultTags);
+
+
 
 }
 

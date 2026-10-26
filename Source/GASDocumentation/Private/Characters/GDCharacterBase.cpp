@@ -72,6 +72,7 @@ void AGDCharacterBase::RemoveCharacterAbilities()
 
 EGDHitReactDirection AGDCharacterBase::GetHitReactDirection(const FVector & ImpactPoint)
 {
+	/*
 	const FVector& ActorLocation = GetActorLocation();
 	// PointPlaneDist is super cheap - 1 vector subtraction, 1 dot product.
 	float DistanceToFrontBackPlane = FVector::PointPlaneDist(ImpactPoint, ActorLocation, GetActorRightVector());
@@ -107,6 +108,30 @@ EGDHitReactDirection AGDCharacterBase::GetHitReactDirection(const FVector & Impa
 	}
 
 	return EGDHitReactDirection::Front;
+	*/
+
+	const FVector& ActorLocation = GetActorLocation();
+
+	// Distance to planes: determines which side of the actor the hit occurred on.
+	float DistanceToFrontBackPlane = FVector::PointPlaneDist(ImpactPoint, ActorLocation, GetActorRightVector());
+	float DistanceToRightLeftPlane = FVector::PointPlaneDist(ImpactPoint, ActorLocation, GetActorForwardVector());
+
+	// We initialize the result with a default value.
+	EGDHitReactDirection ResultDirection = EGDHitReactDirection::Front;
+
+	if (FMath::Abs(DistanceToFrontBackPlane) <= FMath::Abs(DistanceToRightLeftPlane))
+	{
+		// Determine if Front or Back
+		ResultDirection = (DistanceToRightLeftPlane >= 0) ? EGDHitReactDirection::Front : EGDHitReactDirection::Back;
+	}
+	else
+	{
+		// Determine if Right or Left
+		ResultDirection = (DistanceToFrontBackPlane >= 0) ? EGDHitReactDirection::Right : EGDHitReactDirection::Left;
+	}
+
+	// This is now the single, reachable exit point for the function.
+	return ResultDirection;
 }
 
 void AGDCharacterBase::PlayHitReact_Implementation(FGameplayTag HitDirection, AActor * DamageCauser)

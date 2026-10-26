@@ -10,12 +10,31 @@
 
 UGDGA_FireGun::UGDGA_FireGun()
 {
-	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	/*InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
 	FGameplayTag Ability1Tag = FGameplayTag::RequestGameplayTag(FName("Ability.Skill.Ability1"));
 	AbilityTags.AddTag(Ability1Tag);
 	ActivationOwnedTags.AddTag(Ability1Tag);
 
+	ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Skill")));
+
+	Range = 1000.0f;
+	Damage = 12.0f;*/
+
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+
+	// 1. Define the identifying tag
+	FGameplayTag Ability1Tag = FGameplayTag::RequestGameplayTag(FName("Ability.Skill.Ability1"));
+
+	// 2. Setup the Asset Tags (Replaces direct AbilityTags.AddTag)
+	FGameplayTagContainer AssetTagsContainer;
+	AssetTagsContainer.AddTag(Ability1Tag);
+	SetAssetTags(AssetTagsContainer);
+
+	// 3. ActivationOwnedTags are tags granted to the Avatar while the ability is active
+	ActivationOwnedTags.AddTag(Ability1Tag);
+
+	// 4. ActivationBlockedTags prevent this ability from triggering if these tags are present
 	ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Skill")));
 
 	Range = 1000.0f;
